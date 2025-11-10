@@ -27,7 +27,7 @@ The `bootstrap` module provides a complete setup:
 
 ```hcl
 module "gcp_bootstrap" {
-  source = "github.com/mallaire77/personal-gcp//terraform/modules/bootstrap?ref=main"
+  source = "github.com/Byrde/terraform-module-registry/terraform/modules/bootstrap?ref=main"
 
   billing_account_id  = "01AB10-A318CF-51627E"
   project_owner_email = "your-email@example.com"
@@ -109,7 +109,7 @@ resource "random_string" "suffix" {
 }
 
 module "tfstate" {
-  source = "github.com/mallaire77/personal-gcp//terraform/modules/tfstate?ref=main"
+  source = "github.com/Byrde/terraform-module-registry//terraform/modules/tfstate?ref=main"
 
   billing_account_id  = "01AB10-A318CF-51627E"
   project_owner_email = "your-email@example.com"
@@ -143,7 +143,7 @@ resource "random_string" "suffix" {
 }
 
 module "wif" {
-  source = "github.com/mallaire77/personal-gcp//terraform/modules/wif?ref=main"
+  source = "github.com/Byrde/terraform-module-registry//terraform/modules/wif?ref=main"
 
   billing_account_id  = "01AB10-A318CF-51627E"
   project_owner_email = "your-email@example.com"
@@ -159,7 +159,7 @@ For production use, pin to a specific release or commit:
 
 ```hcl
 module "gcp_bootstrap" {
-  source = "github.com/mallaire77/personal-gcp//terraform/modules/bootstrap?ref=v1.0.0"
+  source = "github.com/Byrde/terraform-module-registry//terraform/modules/bootstrap?ref=v1.0.0"
   # ... configuration
 }
 ```

@@ -38,6 +38,8 @@ module "wif" {
   project_id_suffix   = random_string.project_id_suffix.result
   github_organization = var.github_organization
   github_repository   = var.github_repository
+  organization_id     = var.organization_id
+  folder_id           = var.folder_id
 }
 
 # Grant the GitHub Actions service account access to tfstate buckets
@@ -52,13 +54,4 @@ resource "google_storage_bucket_iam_member" "tfstate_admin" {
     module.tfstate,
     module.wif
   ]
-}
-
-# Grant billing account user role to allow linking projects to billing account
-resource "google_billing_account_iam_member" "github_actions_billing_user" {
-  billing_account_id = var.billing_account_id
-  role               = "roles/billing.user"
-  member             = module.wif.service_account_member
-
-  depends_on = [module.wif]
 }

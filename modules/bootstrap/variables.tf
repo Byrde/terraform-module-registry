@@ -1,3 +1,15 @@
+variable "organization_id" {
+  description = "GCP Organization ID where projects will be created (optional, not needed for personal accounts)"
+  type        = string
+  default     = null
+}
+
+variable "folder_id" {
+  description = "GCP Folder ID where projects will be created (optional)"
+  type        = string
+  default     = null
+}
+
 variable "billing_account_id" {
   description = "The GCP billing account ID"
   type        = string

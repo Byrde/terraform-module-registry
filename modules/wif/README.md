@@ -2,7 +2,31 @@
 
 Creates Workload Identity Federation (WIF) for GitHub Actions to authenticate with GCP without service account keys.
 
+## Features
+
+- GitHub Actions OIDC authentication with GCP
+- Service account with billing permissions (can link projects to billing accounts)
+- Optional project creation permissions (organization or folder level)
+- Supports both organizational and personal GCP accounts
+
 ## Usage
+
+### With Organization (project creation enabled)
+
+```hcl
+module "wif" {
+  source = "github.com/byrde/terraform-module-registry//modules/wif?ref=v1.0.0"
+
+  billing_account_id  = "012345-ABCDEF-123456"
+  project_owner_email = "owner@example.com"
+  project_id_suffix   = "abc"
+  github_organization = "your-org"
+  github_repository   = "your-repo"
+  organization_id     = "123456789012"
+}
+```
+
+### Personal Account (no project creation)
 
 ```hcl
 module "wif" {
@@ -25,6 +49,8 @@ module "wif" {
 | project_id_suffix | Random suffix for project IDs | string | yes |
 | github_organization | GitHub organization name | string | yes |
 | github_repository | GitHub repository name | string | yes |
+| organization_id | GCP Organization ID for project creation | string | no |
+| folder_id | GCP Folder ID for project creation | string | no |
 
 ## Outputs
 

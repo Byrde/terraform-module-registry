@@ -17,6 +17,7 @@ resource "google_project_service" "wif_services" {
     "iamcredentials.googleapis.com",
     "sts.googleapis.com",
     "serviceusage.googleapis.com",
+    "cloudbilling.googleapis.com",
   ])
 
   project            = google_project.wif.project_id
@@ -87,5 +88,36 @@ resource "google_service_account_iam_member" "workload_identity_user" {
   service_account_id = google_service_account.github_actions.name
   role               = "roles/iam.workloadIdentityUser"
   member             = "principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github_pool.name}/attribute.repository/${var.github_organization}/${var.github_repository}"
+}
+
+# Grant billing account user role to allow linking projects to billing account
+resource "google_billing_account_iam_member" "github_actions_billing_user" {
+  billing_account_id = var.billing_account_id
+  role               = "roles/billing.user"
+  member             = "serviceAccount:${google_service_account.github_actions.email}"
+
+  depends_on = [google_service_account.github_actions]
+}
+
+# Grant project creator role at organization level (if organization is provided)
+resource "google_organization_iam_member" "github_actions_project_creator" {
+  count = var.organization_id != null ? 1 : 0
+
+  org_id = var.organization_id
+  role   = "roles/resourcemanager.projectCreator"
+  member = "serviceAccount:${google_service_account.github_actions.email}"
+
+  depends_on = [google_service_account.github_actions]
+}
+
+# Grant project creator role at folder level (if folder is provided)
+resource "google_folder_iam_member" "github_actions_project_creator" {
+  count = var.folder_id != null ? 1 : 0
+
+  folder = var.folder_id
+  role   = "roles/resourcemanager.projectCreator"
+  member = "serviceAccount:${google_service_account.github_actions.email}"
+
+  depends_on = [google_service_account.github_actions]
 }
 

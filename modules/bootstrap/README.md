@@ -28,7 +28,7 @@ module "bootstrap" {
 }
 ```
 
-### Personal Account (no project creation)
+### Personal Account (project creation via billing account)
 
 ```hcl
 module "bootstrap" {
@@ -39,6 +39,7 @@ module "bootstrap" {
   bucket_location     = "US"
   github_organization = "your-org"
   github_repository   = "your-repo"
+  # No organization_id or folder_id - uses billing.projectManager role instead
   
   environments = {
     dev = {

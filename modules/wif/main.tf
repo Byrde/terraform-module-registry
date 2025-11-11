@@ -99,6 +99,17 @@ resource "google_billing_account_iam_member" "github_actions_billing_user" {
   depends_on = [google_service_account.github_actions]
 }
 
+# Grant billing project manager role for project creation when no org/folder parent exists
+resource "google_billing_account_iam_member" "github_actions_billing_project_manager" {
+  count = var.organization_id == null && var.folder_id == null ? 1 : 0
+
+  billing_account_id = var.billing_account_id
+  role               = "roles/billing.projectManager"
+  member             = "serviceAccount:${google_service_account.github_actions.email}"
+
+  depends_on = [google_service_account.github_actions]
+}
+
 # Grant project creator role at organization level (if organization is provided)
 resource "google_organization_iam_member" "github_actions_project_creator" {
   count = var.organization_id != null ? 1 : 0

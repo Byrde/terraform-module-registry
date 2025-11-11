@@ -6,7 +6,10 @@ Creates Workload Identity Federation (WIF) for GitHub Actions to authenticate wi
 
 - GitHub Actions OIDC authentication with GCP
 - Service account with billing permissions (can link projects to billing accounts)
-- Optional project creation permissions (organization or folder level)
+- Project creation permissions:
+  - Organization level (when `organization_id` is provided)
+  - Folder level (when `folder_id` is provided)
+  - Billing account level (when neither organization nor folder is provided - for personal accounts)
 - Supports both organizational and personal GCP accounts
 
 ## Usage
@@ -26,7 +29,7 @@ module "wif" {
 }
 ```
 
-### Personal Account (no project creation)
+### Personal Account (project creation via billing account)
 
 ```hcl
 module "wif" {
@@ -37,6 +40,7 @@ module "wif" {
   project_id_suffix   = "abc"
   github_organization = "your-org"
   github_repository   = "your-repo"
+  # No organization_id or folder_id - uses billing.projectManager role instead
 }
 ```
 

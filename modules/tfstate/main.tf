@@ -38,7 +38,7 @@ resource "google_storage_bucket" "tfstate" {
   for_each = var.environments
 
   project       = google_project.tfstate.project_id
-  name          = "prj-shared-tfstate-${each.key}"
+  name          = "prj-shared-tfstate-${each.key}-${var.project_id_suffix}"
   location      = var.bucket_location
   force_destroy = false
 

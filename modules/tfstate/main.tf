@@ -3,6 +3,8 @@ resource "google_project" "tfstate" {
   name            = "prj-shared-tfstate-${var.project_id_suffix}"
   project_id      = "prj-shared-tfstate-${var.project_id_suffix}"
   billing_account = var.billing_account_id
+  folder_id       = var.folder_id
+  org_id          = var.folder_id == null ? var.organization_id : null
 
   lifecycle {
     prevent_destroy = true
@@ -67,6 +69,8 @@ resource "google_project" "backup" {
   name            = "prj-shared-backup-${var.project_id_suffix}"
   project_id      = "prj-shared-backup-${var.project_id_suffix}"
   billing_account = var.billing_account_id
+  folder_id       = var.folder_id
+  org_id          = var.folder_id == null ? var.organization_id : null
 
   lifecycle {
     prevent_destroy = true

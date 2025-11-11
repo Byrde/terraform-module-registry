@@ -26,6 +26,8 @@ module "tfstate" {
   bucket_location     = var.bucket_location
   project_id_suffix   = random_string.project_id_suffix.result
   environments        = var.environments
+  organization_id     = var.organization_id
+  folder_id           = var.folder_id
 }
 
 # Workload Identity Federation Module

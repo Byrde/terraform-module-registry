@@ -4,6 +4,54 @@ Creates GCP projects and GCS buckets for Terraform state management and backups 
 
 ## Usage
 
+### With Folder Parent
+
+```hcl
+module "tfstate" {
+  source = "github.com/byrde/terraform-module-registry//modules/tfstate?ref=v1.0.0"
+
+  billing_account_id  = "012345-ABCDEF-123456"
+  project_owner_email = "owner@example.com"
+  bucket_location     = "US"
+  project_id_suffix   = "abc"
+  folder_id           = "123456789012"
+  
+  environments = {
+    dev = {
+      tfstate_retention_versions = 5
+      backup_retention_days      = 30
+      backup_nearline_days       = 7
+      backup_coldline_days       = 14
+    }
+  }
+}
+```
+
+### With Organization Parent
+
+```hcl
+module "tfstate" {
+  source = "github.com/byrde/terraform-module-registry//modules/tfstate?ref=v1.0.0"
+
+  billing_account_id  = "012345-ABCDEF-123456"
+  project_owner_email = "owner@example.com"
+  bucket_location     = "US"
+  project_id_suffix   = "abc"
+  organization_id     = "123456789012"
+  
+  environments = {
+    dev = {
+      tfstate_retention_versions = 5
+      backup_retention_days      = 30
+      backup_nearline_days       = 7
+      backup_coldline_days       = 14
+    }
+  }
+}
+```
+
+### Without Parent (Personal Account)
+
 ```hcl
 module "tfstate" {
   source = "github.com/byrde/terraform-module-registry//modules/tfstate?ref=v1.0.0"
@@ -33,6 +81,8 @@ module "tfstate" {
 | bucket_location | Location for GCS buckets | string | yes |
 | project_id_suffix | Random suffix for project IDs | string | yes |
 | environments | Environment configurations for tfstate and backup buckets | map(object) | yes |
+| organization_id | GCP Organization ID where projects will be created | string | no |
+| folder_id | GCP Folder ID where projects will be created (takes precedence over organization_id) | string | no |
 
 ## Outputs
 

@@ -24,13 +24,13 @@ variable "github_repository" {
 }
 
 variable "organization_id" {
-  description = "GCP Organization ID where projects will be created (optional, not needed for personal accounts)"
+  description = "GCP Organization ID where projects will be created (optional)"
   type        = string
   default     = null
 }
 
 variable "folder_id" {
-  description = "GCP Folder ID where projects will be created (optional)"
+  description = "GCP Folder ID where projects will be created (optional, takes precedence over organization_id)"
   type        = string
   default     = null
 }

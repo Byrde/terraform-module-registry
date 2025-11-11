@@ -4,7 +4,31 @@ Bootstraps GCP infrastructure for Terraform state management and GitHub Actions 
 
 ## Usage
 
-### With Organization (project creation enabled)
+### With Folder Parent
+
+```hcl
+module "bootstrap" {
+  source = "github.com/byrde/terraform-module-registry//modules/bootstrap?ref=v1.0.0"
+
+  billing_account_id  = "012345-ABCDEF-123456"
+  project_owner_email = "owner@example.com"
+  bucket_location     = "US"
+  github_organization = "your-org"
+  github_repository   = "your-repo"
+  folder_id           = "123456789012"
+  
+  environments = {
+    dev = {
+      tfstate_retention_versions = 5
+      backup_retention_days      = 30
+      backup_nearline_days       = 7
+      backup_coldline_days       = 14
+    }
+  }
+}
+```
+
+### With Organization Parent
 
 ```hcl
 module "bootstrap" {
@@ -28,7 +52,7 @@ module "bootstrap" {
 }
 ```
 
-### Personal Account (project creation via billing account)
+### Personal Account (no parent)
 
 ```hcl
 module "bootstrap" {
@@ -62,8 +86,8 @@ module "bootstrap" {
 | github_organization | GitHub organization name | string | yes |
 | github_repository | GitHub repository name | string | yes |
 | environments | Environment configurations for tfstate and backup buckets | map(object) | yes |
-| organization_id | GCP Organization ID for project creation | string | no |
-| folder_id | GCP Folder ID for project creation | string | no |
+| organization_id | GCP Organization ID where projects will be created | string | no |
+| folder_id | GCP Folder ID where projects will be created (takes precedence over organization_id) | string | no |
 
 ## Outputs
 

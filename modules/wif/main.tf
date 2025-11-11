@@ -3,6 +3,8 @@ resource "google_project" "wif" {
   name            = "prj-shared-wif-${var.project_id_suffix}"
   project_id      = "prj-shared-wif-${var.project_id_suffix}"
   billing_account = var.billing_account_id
+  folder_id       = var.folder_id
+  org_id          = var.folder_id == null ? var.organization_id : null
 
   lifecycle {
     prevent_destroy = true
@@ -127,6 +129,28 @@ resource "google_folder_iam_member" "github_actions_project_creator" {
 
   folder = var.folder_id
   role   = "roles/resourcemanager.projectCreator"
+  member = "serviceAccount:${google_service_account.github_actions.email}"
+
+  depends_on = [google_service_account.github_actions]
+}
+
+# Grant owner role at organization level (if organization is provided and folder is not)
+resource "google_organization_iam_member" "github_actions_owner" {
+  count = var.organization_id != null && var.folder_id == null ? 1 : 0
+
+  org_id = var.organization_id
+  role   = "roles/owner"
+  member = "serviceAccount:${google_service_account.github_actions.email}"
+
+  depends_on = [google_service_account.github_actions]
+}
+
+# Grant owner role at folder level (if folder is provided)
+resource "google_folder_iam_member" "github_actions_owner" {
+  count = var.folder_id != null ? 1 : 0
+
+  folder = var.folder_id
+  role   = "roles/owner"
   member = "serviceAccount:${google_service_account.github_actions.email}"
 
   depends_on = [google_service_account.github_actions]

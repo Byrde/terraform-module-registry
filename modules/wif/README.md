@@ -6,6 +6,7 @@ Creates Workload Identity Federation (WIF) for GitHub Actions to authenticate wi
 
 - GitHub Actions OIDC authentication with GCP
 - Service account with billing permissions (can link projects to billing accounts)
+- Service account with owner permissions at parent level (organization or folder)
 - Project creation permissions:
   - Organization level (when `organization_id` is provided)
   - Folder level (when `folder_id` is provided)
@@ -14,7 +15,22 @@ Creates Workload Identity Federation (WIF) for GitHub Actions to authenticate wi
 
 ## Usage
 
-### With Organization (project creation enabled)
+### With Folder Parent
+
+```hcl
+module "wif" {
+  source = "github.com/byrde/terraform-module-registry//modules/wif?ref=v1.0.0"
+
+  billing_account_id  = "012345-ABCDEF-123456"
+  project_owner_email = "owner@example.com"
+  project_id_suffix   = "abc"
+  github_organization = "your-org"
+  github_repository   = "your-repo"
+  folder_id           = "123456789012"
+}
+```
+
+### With Organization Parent
 
 ```hcl
 module "wif" {
@@ -29,7 +45,7 @@ module "wif" {
 }
 ```
 
-### Personal Account (project creation via billing account)
+### Personal Account (no parent)
 
 ```hcl
 module "wif" {
@@ -53,8 +69,8 @@ module "wif" {
 | project_id_suffix | Random suffix for project IDs | string | yes |
 | github_organization | GitHub organization name | string | yes |
 | github_repository | GitHub repository name | string | yes |
-| organization_id | GCP Organization ID for project creation | string | no |
-| folder_id | GCP Folder ID for project creation | string | no |
+| organization_id | GCP Organization ID where projects will be created | string | no |
+| folder_id | GCP Folder ID where projects will be created (takes precedence over organization_id) | string | no |
 
 ## Outputs
 

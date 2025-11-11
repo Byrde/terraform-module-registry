@@ -1,0 +1,37 @@
+# WIF Module
+
+Creates Workload Identity Federation (WIF) for GitHub Actions to authenticate with GCP without service account keys.
+
+## Usage
+
+```hcl
+module "wif" {
+  source = "github.com/byrde/terraform-module-registry//modules/wif?ref=v1.0.0"
+
+  billing_account_id  = "012345-ABCDEF-123456"
+  project_owner_email = "owner@example.com"
+  project_id_suffix   = "abc"
+  github_organization = "your-org"
+  github_repository   = "your-repo"
+}
+```
+
+## Inputs
+
+| Name | Description | Type | Required |
+|------|-------------|------|----------|
+| billing_account_id | GCP billing account ID | string | yes |
+| project_owner_email | Email address of the project owner | string | yes |
+| project_id_suffix | Random suffix for project IDs | string | yes |
+| github_organization | GitHub organization name | string | yes |
+| github_repository | GitHub repository name | string | yes |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| wif_project_id | The WIF project ID |
+| workload_identity_provider | The full workload identity provider resource name |
+| service_account_email | The service account email |
+| service_account_member | The service account member format for IAM bindings |
+

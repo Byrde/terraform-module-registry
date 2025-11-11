@@ -1,0 +1,45 @@
+# TFState Module
+
+Creates GCP projects and GCS buckets for Terraform state management and backups with versioning and lifecycle policies.
+
+## Usage
+
+```hcl
+module "tfstate" {
+  source = "github.com/byrde/terraform-module-registry//modules/tfstate?ref=v1.0.0"
+
+  billing_account_id  = "012345-ABCDEF-123456"
+  project_owner_email = "owner@example.com"
+  bucket_location     = "US"
+  project_id_suffix   = "abc"
+  
+  environments = {
+    dev = {
+      tfstate_retention_versions = 5
+      backup_retention_days      = 30
+      backup_nearline_days       = 7
+      backup_coldline_days       = 14
+    }
+  }
+}
+```
+
+## Inputs
+
+| Name | Description | Type | Required |
+|------|-------------|------|----------|
+| billing_account_id | GCP billing account ID | string | yes |
+| project_owner_email | Email address of the project owner | string | yes |
+| bucket_location | Location for GCS buckets | string | yes |
+| project_id_suffix | Random suffix for project IDs | string | yes |
+| environments | Environment configurations for tfstate and backup buckets | map(object) | yes |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| tfstate_project_id | The tfstate project ID |
+| tfstate_buckets | Map of environment to tfstate bucket resources |
+| backup_project_id | The backup project ID |
+| backup_buckets | Map of environment to backup bucket resources |
+

@@ -20,6 +20,7 @@ resource "google_project_service" "wif_services" {
     "sts.googleapis.com",
     "serviceusage.googleapis.com",
     "cloudbilling.googleapis.com",
+    "servicenetworking.googleapis.com",
   ])
 
   project            = google_project.wif.project_id

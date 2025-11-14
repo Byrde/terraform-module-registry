@@ -93,12 +93,9 @@ module "bootstrap" {
 
 | Name | Description |
 |------|-------------|
-| project_id | The tfstate project ID |
+| tfstate_project_id | The tfstate project ID |
 | tfstate_bucket_names | Map of environment to tfstate bucket names |
 | tfstate_bucket_urls | Map of environment to tfstate bucket URLs |
-| backup_project_id | The backup project ID |
-| backup_bucket_names | Map of environment to backup bucket names |
-| backup_bucket_urls | Map of environment to backup bucket URLs |
 | wif_project_id | The WIF project ID |
 | workload_identity_provider | The full workload identity provider resource name |
 | service_account_email | The service account email |

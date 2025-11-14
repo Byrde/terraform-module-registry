@@ -37,9 +37,3 @@ variable "environments" {
     tfstate_retention_versions = number
   }))
 }
-
-variable "prevent_destroy" {
-  description = "Prevent destruction of critical resources (project and state buckets)"
-  type        = bool
-  default     = true
-}

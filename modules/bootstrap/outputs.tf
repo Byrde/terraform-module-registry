@@ -14,21 +14,6 @@ output "tfstate_bucket_urls" {
   value       = { for k, v in module.tfstate.tfstate_buckets : k => v.url }
 }
 
-output "backup_project_id" {
-  description = "The backup project ID"
-  value       = module.tfstate.backup_project_id
-}
-
-output "backup_bucket_names" {
-  description = "Map of environment to backup bucket names"
-  value       = { for k, v in module.tfstate.backup_buckets : k => v.name }
-}
-
-output "backup_bucket_urls" {
-  description = "Map of environment to backup bucket URLs"
-  value       = { for k, v in module.tfstate.backup_buckets : k => v.url }
-}
-
 # WIF Module Outputs
 output "wif_project_id" {
   description = "The WIF project ID (service account home project)"

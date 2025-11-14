@@ -1,5 +1,5 @@
 # TFState Module Outputs
-output "project_id" {
+output "tfstate_project_id" {
   description = "The tfstate project ID"
   value       = module.tfstate.tfstate_project_id
 }

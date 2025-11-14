@@ -74,7 +74,6 @@ module "tfstate" {
 | environments | Environment configurations for tfstate buckets | map(object) | yes |
 | organization_id | GCP Organization ID where projects will be created | string | no |
 | folder_id | GCP Folder ID where projects will be created (takes precedence over organization_id) | string | no |
-| prevent_destroy | Prevent destruction of critical resources (project and state buckets) | bool | no (default: true) |
 
 ## Outputs
 

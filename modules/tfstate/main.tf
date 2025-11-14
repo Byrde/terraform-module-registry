@@ -7,7 +7,7 @@ resource "google_project" "tfstate" {
   org_id          = var.folder_id == null ? var.organization_id : null
 
   lifecycle {
-    prevent_destroy = var.prevent_destroy
+    prevent_destroy = true
   }
 }
 
@@ -58,7 +58,7 @@ resource "google_storage_bucket" "tfstate" {
   }
 
   lifecycle {
-    prevent_destroy = var.prevent_destroy
+    prevent_destroy = true
   }
 
   depends_on = [google_project_service.tfstate_services]

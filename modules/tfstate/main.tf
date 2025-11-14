@@ -7,7 +7,7 @@ resource "google_project" "tfstate" {
   org_id          = var.folder_id == null ? var.organization_id : null
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = var.prevent_destroy
   }
 }
 
@@ -58,111 +58,9 @@ resource "google_storage_bucket" "tfstate" {
   }
 
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = var.prevent_destroy
   }
 
   depends_on = [google_project_service.tfstate_services]
-}
-
-# Create the backup project
-resource "google_project" "backup" {
-  name            = "prj-shared-backup-${var.project_id_suffix}"
-  project_id      = "prj-shared-backup-${var.project_id_suffix}"
-  billing_account = var.billing_account_id
-  folder_id       = var.folder_id
-  org_id          = var.folder_id == null ? var.organization_id : null
-
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-# Enable required APIs for backup project
-resource "google_project_service" "backup_services" {
-  for_each = toset([
-    "storage.googleapis.com",
-    "cloudresourcemanager.googleapis.com",
-    "serviceusage.googleapis.com",
-  ])
-
-  project            = google_project.backup.project_id
-  service            = each.value
-  disable_on_destroy = false
-}
-
-# Grant owner access to the backup project
-resource "google_project_iam_member" "backup_owner" {
-  project = google_project.backup.project_id
-  role    = "roles/owner"
-  member  = "user:${var.project_owner_email}"
-
-  depends_on = [google_project_service.backup_services]
-}
-
-# Create GCS buckets for environment backups
-resource "google_storage_bucket" "backups" {
-  for_each = var.environments
-
-  project       = google_project.backup.project_id
-  name          = "prj-shared-backup-${each.key}-${var.project_id_suffix}"
-  location      = var.bucket_location
-  force_destroy = false
-
-  uniform_bucket_level_access = true
-
-  versioning {
-    enabled = true
-  }
-
-  # Delete backups after retention period
-  lifecycle_rule {
-    condition {
-      age = each.value.backup_retention_days
-    }
-    action {
-      type = "Delete"
-    }
-  }
-
-  # Move to Nearline storage for cost optimization
-  lifecycle_rule {
-    condition {
-      age = each.value.backup_nearline_days
-    }
-    action {
-      type          = "SetStorageClass"
-      storage_class = "NEARLINE"
-    }
-  }
-
-  # Move to Coldline storage if configured
-  dynamic "lifecycle_rule" {
-    for_each = each.value.backup_coldline_days != null ? [1] : []
-    content {
-      condition {
-        age = each.value.backup_coldline_days
-      }
-      action {
-        type          = "SetStorageClass"
-        storage_class = "COLDLINE"
-      }
-    }
-  }
-
-  # Keep last 10 versions of any object
-  lifecycle_rule {
-    condition {
-      num_newer_versions = 10
-    }
-    action {
-      type = "Delete"
-    }
-  }
-
-  lifecycle {
-    prevent_destroy = true
-  }
-
-  depends_on = [google_project_service.backup_services]
 }
 

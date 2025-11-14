@@ -5,10 +5,6 @@ resource "google_project" "wif" {
   billing_account = var.billing_account_id
   folder_id       = var.folder_id
   org_id          = var.folder_id == null ? var.organization_id : null
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 # Enable required APIs
@@ -78,10 +74,6 @@ resource "google_service_account" "github_actions" {
   account_id   = "github-actions-sa"
   display_name = "GitHub Actions Service Account"
   description  = "Service account for GitHub Actions CI/CD"
-
-  lifecycle {
-    prevent_destroy = true
-  }
 
   depends_on = [google_project_service.wif_services]
 }

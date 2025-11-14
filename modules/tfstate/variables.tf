@@ -32,11 +32,14 @@ variable "bucket_location" {
 
 
 variable "environments" {
-  description = "Map of environment configurations for tfstate and backup buckets"
+  description = "Map of environment configurations for tfstate buckets"
   type = map(object({
     tfstate_retention_versions = number
-    backup_retention_days      = number
-    backup_nearline_days       = number
-    backup_coldline_days       = optional(number)
   }))
+}
+
+variable "prevent_destroy" {
+  description = "Prevent destruction of critical resources (project and state buckets)"
+  type        = bool
+  default     = true
 }

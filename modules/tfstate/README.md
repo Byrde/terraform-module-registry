@@ -1,6 +1,6 @@
 # TFState Module
 
-Creates GCP projects and GCS buckets for Terraform state management and backups with versioning and lifecycle policies.
+Creates GCP project and GCS buckets for Terraform state management with versioning and lifecycle policies.
 
 ## Usage
 
@@ -19,9 +19,6 @@ module "tfstate" {
   environments = {
     dev = {
       tfstate_retention_versions = 5
-      backup_retention_days      = 30
-      backup_nearline_days       = 7
-      backup_coldline_days       = 14
     }
   }
 }
@@ -42,9 +39,6 @@ module "tfstate" {
   environments = {
     dev = {
       tfstate_retention_versions = 5
-      backup_retention_days      = 30
-      backup_nearline_days       = 7
-      backup_coldline_days       = 14
     }
   }
 }
@@ -64,9 +58,6 @@ module "tfstate" {
   environments = {
     dev = {
       tfstate_retention_versions = 5
-      backup_retention_days      = 30
-      backup_nearline_days       = 7
-      backup_coldline_days       = 14
     }
   }
 }
@@ -80,9 +71,10 @@ module "tfstate" {
 | project_owner_email | Email address of the project owner | string | yes |
 | bucket_location | Location for GCS buckets | string | yes |
 | project_id_suffix | Random suffix for project IDs | string | yes |
-| environments | Environment configurations for tfstate and backup buckets | map(object) | yes |
+| environments | Environment configurations for tfstate buckets | map(object) | yes |
 | organization_id | GCP Organization ID where projects will be created | string | no |
 | folder_id | GCP Folder ID where projects will be created (takes precedence over organization_id) | string | no |
+| prevent_destroy | Prevent destruction of critical resources (project and state buckets) | bool | no (default: true) |
 
 ## Outputs
 
@@ -90,6 +82,4 @@ module "tfstate" {
 |------|-------------|
 | tfstate_project_id | The tfstate project ID |
 | tfstate_buckets | Map of environment to tfstate bucket resources |
-| backup_project_id | The backup project ID |
-| backup_buckets | Map of environment to backup bucket resources |
 

@@ -17,7 +17,7 @@ resource "random_string" "project_id_suffix" {
 }
 
 # Terraform State Module
-# Creates tfstate and backup projects with GCS buckets
+# Creates tfstate project with GCS buckets
 module "tfstate" {
   source = "../tfstate"
 

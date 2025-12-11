@@ -1,3 +1,8 @@
+output "environments" {
+  description = "Array of environment names"
+  value       = keys(var.environments)
+}
+
 # TFState Module Outputs
 output "tfstate_project_id" {
   description = "The tfstate project ID"

@@ -21,6 +21,8 @@ jobs:
     needs: validate-terraform
     permissions:
       contents: write
+      issues: write
+      pull-requests: write
     steps:
       - name: Create Release
         uses: Byrde/github-reusable-workflows/actions/semantic-release@main

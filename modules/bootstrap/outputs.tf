@@ -48,5 +48,5 @@ output "github_actions_global_variable_names" {
 
 output "github_actions_environment_variable_names" {
   description = "Array of per-environment variable names"
-  value = [for k, v in github_actions_environment_variable.tfstate_buckets : v.variable_name]
+  value       = [for k, v in github_actions_environment_variable.tfstate_buckets : v.variable_name]
 }

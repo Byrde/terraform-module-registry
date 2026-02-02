@@ -3,14 +3,14 @@ output "shared_project_id" {
   value       = local.project_id
 }
 
+output "environments" {
+  description = "Array of environment names (lowercase)"
+  value       = local.environments
+}
+
 output "enabled_apis" {
   description = "List of APIs enabled in the project"
   value       = [for v in google_project_service.apis : v.service]
-}
-
-output "environments" {
-  description = "Array of environment names (lowercase)"
-  value       = tolist(local.environments)
 }
 
 output "tfstate_bucket_names" {

@@ -10,6 +10,12 @@ variable "folder_id" {
   default     = null
 }
 
+variable "project_id" {
+  description = "Existing GCP project ID to use; if set, the module will not create a new project (bring your own project)"
+  type        = string
+  default     = null
+}
+
 variable "region" {
   description = "The region for the GCP resources"
   type        = string

@@ -1,6 +1,6 @@
 # Grant owner access to the tfstate project
 resource "google_project_iam_member" "tfstate_owner" {
-  project = google_project.shared.project_id
+  project = local.project_id
   role    = "roles/owner"
   member  = "user:${var.project_owner_email}"
 
@@ -11,7 +11,7 @@ resource "google_project_iam_member" "tfstate_owner" {
 resource "google_storage_bucket" "tfstate" {
   for_each = local.environments
 
-  project       = google_project.shared.project_id
+  project       = local.project_id
   name          = "tfstate-${each.value}-${random_string.suffix.result}"
   location      = var.region
   force_destroy = false

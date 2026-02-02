@@ -1,6 +1,6 @@
 # Grant owner access to the WIF project
 resource "google_project_iam_member" "wif_owner" {
-  project = google_project.shared.project_id
+  project = local.project_id
   role    = "roles/owner"
   member  = "user:${var.project_owner_email}"
 
@@ -9,7 +9,7 @@ resource "google_project_iam_member" "wif_owner" {
 
 # Create Workload Identity Pool
 resource "google_iam_workload_identity_pool" "github_pool" {
-  project                   = google_project.shared.project_id
+  project                   = local.project_id
   workload_identity_pool_id = "github-pool"
   display_name              = "GitHub Actions Pool"
   description               = "Workload Identity Pool for GitHub Actions"
@@ -22,7 +22,7 @@ resource "google_iam_workload_identity_pool" "github_pool" {
 
 # Create Workload Identity Provider for GitHub
 resource "google_iam_workload_identity_pool_provider" "github_provider" {
-  project                            = google_project.shared.project_id
+  project                            = local.project_id
   workload_identity_pool_id          = google_iam_workload_identity_pool.github_pool.workload_identity_pool_id
   workload_identity_pool_provider_id = "github-provider"
   display_name                       = "GitHub Provider"
@@ -44,7 +44,7 @@ resource "google_iam_workload_identity_pool_provider" "github_provider" {
 
 # Create Service Account for GitHub Actions
 resource "google_service_account" "github_actions" {
-  project      = google_project.shared.project_id
+  project      = local.project_id
   account_id   = "github-actions-sa"
   display_name = "GitHub Actions Service Account"
   description  = "Service account for GitHub Actions CI/CD"

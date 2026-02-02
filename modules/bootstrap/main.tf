@@ -3,6 +3,7 @@
 
 locals {
   environments = toset([for e in var.environments : lower(e)])
+  project_id   = coalesce(var.project_id, google_project.shared[0].project_id)
 }
 
 provider "google" {
@@ -20,8 +21,10 @@ resource "random_string" "suffix" {
   }
 }
 
-# Create the tfstate project
+# Create the tfstate project (omitted when project_id is set)
 resource "google_project" "shared" {
+  count = var.project_id == null ? 1 : 0
+
   name            = "shared-${random_string.suffix.result}"
   project_id      = "shared-${random_string.suffix.result}"
   billing_account = var.billing_account_id
@@ -46,7 +49,7 @@ resource "google_project_service" "apis" {
     "storage.googleapis.com"
   ], var.additional_apis))
 
-  project            = google_project.shared.project_id
+  project            = local.project_id
   service            = each.value
   disable_on_destroy = false
 

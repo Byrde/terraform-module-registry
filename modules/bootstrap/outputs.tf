@@ -1,6 +1,11 @@
 output "shared_project_id" {
-  description = "The shared project ID"
-  value       = google_project.shared.project_id
+  description = "The shared project ID (created or bring-your-own)"
+  value       = local.project_id
+}
+
+output "enabled_apis" {
+  description = "List of APIs enabled in the project"
+  value       = [for v in google_project_service.apis : v.service]
 }
 
 output "environments" {

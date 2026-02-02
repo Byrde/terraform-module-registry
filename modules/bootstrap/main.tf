@@ -1,6 +1,10 @@
 # Bootstrap Terraform for GCP Infrastructure
 # This creates shared infrastructure for Terraform state management and GitHub Actions authentication
 
+locals {
+  environments = toset([for e in var.environments : lower(e)])
+}
+
 provider "google" {
   billing_project = var.billing_account_id
 }
@@ -31,7 +35,7 @@ resource "google_project" "shared" {
 
 # Enable required APIs
 resource "google_project_service" "apis" {
-  for_each = toset([
+  for_each = toset(concat([
     "iam.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "iamcredentials.googleapis.com",
@@ -40,7 +44,7 @@ resource "google_project_service" "apis" {
     "cloudbilling.googleapis.com",
     "servicenetworking.googleapis.com",
     "storage.googleapis.com"
-  ])
+  ], var.additional_apis))
 
   project            = google_project.shared.project_id
   service            = each.value

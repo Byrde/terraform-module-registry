@@ -10,6 +10,12 @@ variable "folder_id" {
   default     = null
 }
 
+variable "region" {
+  description = "The region for the GCP resources"
+  type        = string
+  default     = "northamerica-northeast1"
+}
+
 variable "billing_account_id" {
   description = "The GCP billing account ID"
   type        = string
@@ -20,9 +26,16 @@ variable "project_owner_email" {
   type        = string
 }
 
-variable "bucket_location" {
-  description = "The location for the GCS buckets (e.g., US, EU, us-central1)"
-  type        = string
+variable "additional_apis" {
+  description = "List of additional APIs to enable"
+  type        = list(string)
+  default     = []
+}
+
+variable "environments" {
+  description = "List of environments (values are lowercased internally)"
+  type        = list(string)
+  default     = []
 }
 
 variable "github_organization" {
@@ -33,11 +46,4 @@ variable "github_organization" {
 variable "github_repository" {
   description = "GitHub repository name"
   type        = string
-}
-
-variable "environments" {
-  description = "Map of environment configurations for tfstate buckets"
-  type = map(object({
-    tfstate_retention_versions = number
-  }))
 }

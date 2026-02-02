@@ -4,8 +4,8 @@ output "shared_project_id" {
 }
 
 output "environments" {
-  description = "Array of environment names"
-  value       = keys(var.environments)
+  description = "Array of environment names (lowercase)"
+  value       = tolist(local.environments)
 }
 
 output "tfstate_bucket_names" {

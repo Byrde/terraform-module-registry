@@ -125,7 +125,7 @@ resource "google_folder_iam_member" "github_actions_owner" {
 
 # Grant the GitHub Actions service account access to tfstate buckets
 resource "google_storage_bucket_iam_member" "tfstate_admin" {
-  for_each = var.environments
+  for_each = local.environments
 
   bucket = google_storage_bucket.tfstate[each.key].name
   role   = "roles/storage.objectAdmin"

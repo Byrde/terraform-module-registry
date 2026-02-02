@@ -1,5 +1,5 @@
 resource "github_repository_environment" "environments" {
-  for_each = var.environments
+  for_each = local.environments
 
   repository  = var.github_repository
   environment = each.key
@@ -18,7 +18,7 @@ resource "github_actions_variable" "service_account_email" {
 }
 
 resource "github_actions_environment_variable" "tfstate_buckets" {
-  for_each = var.environments
+  for_each = local.environments
 
   repository    = var.github_repository
   environment   = each.key

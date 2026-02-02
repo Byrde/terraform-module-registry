@@ -9,11 +9,11 @@ resource "google_project_iam_member" "tfstate_owner" {
 
 # Create GCS buckets for environment state
 resource "google_storage_bucket" "tfstate" {
-  for_each = var.environments
+  for_each = local.environments
 
   project       = google_project.shared.project_id
-  name          = "tfstate-${each.key}-${random_string.suffix.result}"
-  location      = var.bucket_location
+  name          = "tfstate-${each.value}-${random_string.suffix.result}"
+  location      = var.region
   force_destroy = false
 
   uniform_bucket_level_access = true
@@ -24,7 +24,7 @@ resource "google_storage_bucket" "tfstate" {
 
   lifecycle_rule {
     condition {
-      num_newer_versions = each.value.tfstate_retention_versions
+      num_newer_versions = 5
     }
     action {
       type = "Delete"

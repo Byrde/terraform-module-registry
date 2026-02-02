@@ -12,7 +12,7 @@ resource "google_storage_bucket" "tfstate" {
   for_each = var.environments
 
   project       = google_project.shared.project_id
-  name          = "tfstate"
+  name          = "tfstate-${each.key}-${random_string.suffix.result}"
   location      = var.bucket_location
   force_destroy = false
 

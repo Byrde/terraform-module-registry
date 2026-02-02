@@ -6,8 +6,8 @@ provider "google" {
 }
 
 # Random Project ID Suffix
-resource "random_string" "project_id_suffix" {
-  length  = 3
+resource "random_string" "suffix" {
+  length  = 5
   special = false
   upper   = false
 
@@ -18,8 +18,8 @@ resource "random_string" "project_id_suffix" {
 
 # Create the tfstate project
 resource "google_project" "shared" {
-  name            = "shared-${random_string.project_id_suffix.result}"
-  project_id      = "shared-${random_string.project_id_suffix.result}"
+  name            = "shared-${random_string.suffix.result}"
+  project_id      = "shared-${random_string.suffix.result}"
   billing_account = var.billing_account_id
   folder_id       = var.folder_id
   org_id          = var.folder_id == null ? var.organization_id : null

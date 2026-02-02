@@ -16,44 +16,35 @@ resource "random_string" "project_id_suffix" {
   }
 }
 
-# Terraform State Module
-# Creates tfstate project with GCS buckets
-module "tfstate" {
-  source = "../tfstate"
+# Create the tfstate project
+resource "google_project" "shared" {
+  name            = "shared-${random_string.project_id_suffix.result}"
+  project_id      = "shared-${random_string.project_id_suffix.result}"
+  billing_account = var.billing_account_id
+  folder_id       = var.folder_id
+  org_id          = var.folder_id == null ? var.organization_id : null
 
-  billing_account_id  = var.billing_account_id
-  project_owner_email = var.project_owner_email
-  bucket_location     = var.bucket_location
-  project_id_suffix   = random_string.project_id_suffix.result
-  environments        = var.environments
-  organization_id     = var.organization_id
-  folder_id           = var.folder_id
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
-# Workload Identity Federation Module
-# Creates WIF project with GitHub Actions authentication
-module "wif" {
-  source = "../wif"
+# Enable required APIs
+resource "google_project_service" "apis" {
+  for_each = toset([
+    "iam.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
+    "iamcredentials.googleapis.com",
+    "sts.googleapis.com",
+    "serviceusage.googleapis.com",
+    "cloudbilling.googleapis.com",
+    "servicenetworking.googleapis.com",
+    "storage.googleapis.com"
+  ])
 
-  billing_account_id  = var.billing_account_id
-  project_owner_email = var.project_owner_email
-  project_id_suffix   = random_string.project_id_suffix.result
-  github_organization = var.github_organization
-  github_repository   = var.github_repository
-  organization_id     = var.organization_id
-  folder_id           = var.folder_id
-}
+  project            = google_project.shared.project_id
+  service            = each.value
+  disable_on_destroy = false
 
-# Grant the GitHub Actions service account access to tfstate buckets
-resource "google_storage_bucket_iam_member" "tfstate_admin" {
-  for_each = var.environments
-
-  bucket = module.tfstate.tfstate_buckets[each.key].name
-  role   = "roles/storage.objectAdmin"
-  member = module.wif.service_account_member
-
-  depends_on = [
-    module.tfstate,
-    module.wif
-  ]
+  depends_on = [google_project.shared]
 }

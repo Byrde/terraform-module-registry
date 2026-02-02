@@ -1,54 +1,28 @@
-# Create the WIF project
-resource "google_project" "wif" {
-  name            = "prj-shared-wif-${var.project_id_suffix}"
-  project_id      = "prj-shared-wif-${var.project_id_suffix}"
-  billing_account = var.billing_account_id
-  folder_id       = var.folder_id
-  org_id          = var.folder_id == null ? var.organization_id : null
-}
-
-# Enable required APIs
-resource "google_project_service" "wif_services" {
-  for_each = toset([
-    "iam.googleapis.com",
-    "cloudresourcemanager.googleapis.com",
-    "iamcredentials.googleapis.com",
-    "sts.googleapis.com",
-    "serviceusage.googleapis.com",
-    "cloudbilling.googleapis.com",
-    "servicenetworking.googleapis.com",
-  ])
-
-  project            = google_project.wif.project_id
-  service            = each.value
-  disable_on_destroy = false
-}
-
 # Grant owner access to the WIF project
 resource "google_project_iam_member" "wif_owner" {
-  project = google_project.wif.project_id
+  project = google_project.shared.project_id
   role    = "roles/owner"
   member  = "user:${var.project_owner_email}"
 
-  depends_on = [google_project_service.wif_services]
+  depends_on = [google_project_service.apis]
 }
 
 # Create Workload Identity Pool
 resource "google_iam_workload_identity_pool" "github_pool" {
-  project                   = google_project.wif.project_id
+  project                   = google_project.shared.project_id
   workload_identity_pool_id = "github-pool"
   display_name              = "GitHub Actions Pool"
   description               = "Workload Identity Pool for GitHub Actions"
 
   depends_on = [
-    google_project_service.wif_services,
+    google_project_service.apis,
     google_project_iam_member.wif_owner
   ]
 }
 
 # Create Workload Identity Provider for GitHub
 resource "google_iam_workload_identity_pool_provider" "github_provider" {
-  project                            = google_project.wif.project_id
+  project                            = google_project.shared.project_id
   workload_identity_pool_id          = google_iam_workload_identity_pool.github_pool.workload_identity_pool_id
   workload_identity_pool_provider_id = "github-provider"
   display_name                       = "GitHub Provider"
@@ -70,12 +44,12 @@ resource "google_iam_workload_identity_pool_provider" "github_provider" {
 
 # Create Service Account for GitHub Actions
 resource "google_service_account" "github_actions" {
-  project      = google_project.wif.project_id
+  project      = google_project.shared.project_id
   account_id   = "github-actions-sa"
   display_name = "GitHub Actions Service Account"
   description  = "Service account for GitHub Actions CI/CD"
 
-  depends_on = [google_project_service.wif_services]
+  depends_on = [google_project_service.apis]
 }
 
 # Allow the GitHub Actions identity to impersonate the service account
@@ -149,3 +123,15 @@ resource "google_folder_iam_member" "github_actions_owner" {
   depends_on = [google_service_account.github_actions]
 }
 
+# Grant the GitHub Actions service account access to tfstate buckets
+resource "google_storage_bucket_iam_member" "tfstate_admin" {
+  for_each = var.environments
+
+  bucket = google_storage_bucket.tfstate[each.key].name
+  role   = "roles/storage.objectAdmin"
+  member = google_service_account_iam_member.workload_identity_user.member
+
+  depends_on = [
+    google_service_account_iam_member.workload_identity_user
+  ]
+}
